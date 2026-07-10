@@ -57,3 +57,11 @@ class ShortURLService:
 
         await self._session.commit()
         return short_url
+
+    async def delete(self, short_code: str) -> None:
+        is_deleted = await ShortURLRepository(self._session).delete(short_code)
+
+        if not is_deleted:
+            raise ShortURLNotFoundError(short_code)
+
+        await self._session.commit()

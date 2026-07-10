@@ -33,3 +33,8 @@ async def update_short_url(
     session: SessionDep,
 ):
     return await ShortURLService(session).update(short_code, payload)
+
+
+@router.delete("/{short_code}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_short_url(short_code: str, session: SessionDep) -> None:
+    await ShortURLService(session).delete(short_code)

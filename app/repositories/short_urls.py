@@ -30,3 +30,13 @@ class ShortURLRepository:
         await self._session.flush()
         await self._session.refresh(short_url)
         return short_url
+
+    async def delete(self, short_code: str) -> bool:
+        short_url = await self.get(short_code)
+
+        if short_url is None:
+            return False
+
+        await self._session.delete(short_url)
+        await self._session.flush()
+        return True
