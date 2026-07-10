@@ -1,9 +1,7 @@
-from collections.abc import AsyncGenerator
 from datetime import datetime
 
 from sqlalchemy import func
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncAttrs, async_sessionmaker, \
-    AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncAttrs, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.core.config import settings
@@ -22,8 +20,3 @@ class Base(AsyncAttrs, DeclarativeBase):
         server_default=func.now(),
         onupdate=func.now(),
     )
-
-
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with session_maker() as session:
-        yield session
