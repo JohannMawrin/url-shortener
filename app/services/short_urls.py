@@ -4,6 +4,7 @@ import string
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import ShortURLNotFoundError
 from app.models.short_urls import ShortURL
 from app.repositories.short_urls import ShortURLRepository
 from app.schemas.short_urls import ShortURLPayload
@@ -36,3 +37,11 @@ class ShortURLService:
                     continue
 
         raise RuntimeError("Failed to generate a unique short code")
+
+    async def get(self, short_code: str) -> ShortURL:
+        short_url = await ShortURLRepository(self._session).get(short_code)
+
+        if short_url is None:
+            raise ShortURLNotFoundError(short_code)
+
+        return short_url
