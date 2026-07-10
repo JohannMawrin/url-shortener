@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, HTTPException
 
 from app.api.dependencies import SessionDep
-from app.schemas.short_urls import ShortURLPublic, ShortURLPayload
+from app.schemas.short_urls import ShortURLPublic, ShortURLPayload, ShortURLStats
 from app.services.short_urls import ShortURLService
 
 router = APIRouter(prefix="/shorten", tags=["short_urls"])
@@ -18,4 +18,9 @@ async def create_short_url(payload: ShortURLPayload, session: SessionDep):
 
 @router.get("/{short_code}", response_model=ShortURLPublic)
 async def get_original_url(short_code: str, session: SessionDep):
+    return await ShortURLService(session).get(short_code)
+
+
+@router.get("/{short_code}/stats", response_model=ShortURLStats)
+async def get_url_stats(short_code: str, session: SessionDep):
     return await ShortURLService(session).get(short_code)
