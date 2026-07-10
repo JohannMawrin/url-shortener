@@ -65,3 +65,15 @@ class ShortURLService:
             raise ShortURLNotFoundError(short_code)
 
         await self._session.commit()
+
+    async def increment_access_count(self, short_code: str) -> ShortURL:
+        repository = ShortURLRepository(self._session)
+        short_url = await repository.get(short_code)
+
+        if short_url is None:
+            raise ShortURLNotFoundError(short_code)
+
+        await repository.increment_access_count(short_code)
+
+        await self._session.commit()
+        return short_url

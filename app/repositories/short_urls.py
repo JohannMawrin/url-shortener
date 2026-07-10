@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.short_urls import ShortURL
@@ -40,3 +40,12 @@ class ShortURLRepository:
         await self._session.delete(short_url)
         await self._session.flush()
         return True
+
+    async def increment_access_count(self, short_code: str) -> None:
+        query = (
+            update(ShortURL)
+            .where(ShortURL.short_code == short_code)
+            .values(access_count=ShortURL.access_count + 1)
+        )
+        await self._session.execute(query)
+        await self._session.flush()

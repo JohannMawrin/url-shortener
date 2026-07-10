@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status
 
 from app.api.dependencies import SessionDep
 from app.schemas.short_urls import ShortURLPublic, ShortURLPayload, ShortURLStats
