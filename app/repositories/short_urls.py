@@ -18,3 +18,15 @@ class ShortURLRepository:
         query = select(ShortURL).where(ShortURL.short_code == short_code)
         result = await self._session.execute(query)
         return result.scalar_one_or_none()
+
+    async def update(self, short_code: str, url: str) -> ShortURL | None:
+        short_url = await self.get(short_code)
+
+        if short_url is None:
+            return None
+
+        short_url.url = url
+
+        await self._session.flush()
+        await self._session.refresh(short_url)
+        return short_url

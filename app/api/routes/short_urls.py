@@ -24,3 +24,12 @@ async def get_original_url(short_code: str, session: SessionDep):
 @router.get("/{short_code}/stats", response_model=ShortURLStats)
 async def get_url_stats(short_code: str, session: SessionDep):
     return await ShortURLService(session).get(short_code)
+
+
+@router.put("/{short_code}", response_model=ShortURLPublic)
+async def update_short_url(
+    short_code: str,
+    payload: ShortURLPayload,
+    session: SessionDep,
+):
+    return await ShortURLService(session).update(short_code, payload)

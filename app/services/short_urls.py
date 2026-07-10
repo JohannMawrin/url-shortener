@@ -45,3 +45,15 @@ class ShortURLService:
             raise ShortURLNotFoundError(short_code)
 
         return short_url
+
+    async def update(self, short_code: str, payload: ShortURLPayload) -> ShortURL:
+        short_url = await ShortURLRepository(self._session).update(
+            short_code,
+            str(payload.url),
+        )
+
+        if short_url is None:
+            raise ShortURLNotFoundError(short_code)
+
+        await self._session.commit()
+        return short_url
