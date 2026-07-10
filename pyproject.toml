@@ -1,0 +1,9 @@
+[project]
+name = "url-shortener"
+version = "0.1.0"
+description = "A URL shortener API service built with FastAPI"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.139.0",
+    "uvicorn>=0.51.0",
+]
