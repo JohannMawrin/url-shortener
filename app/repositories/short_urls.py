@@ -20,32 +20,33 @@ class ShortURLRepository:
         return result.scalar_one_or_none()
 
     async def update(self, short_code: str, url: str) -> ShortURL | None:
-        short_url = await self.get(short_code)
-
-        if short_url is None:
-            return None
-
-        short_url.url = url
-
+        query = (
+            update(ShortURL)
+            .where(ShortURL.short_code == short_code)
+            .values(url=url)
+            .returning(ShortURL)
+        )
+        result = await self._session.execute(query)
         await self._session.flush()
-        await self._session.refresh(short_url)
-        return short_url
+        return result.scalar_one_or_none()
 
     async def delete(self, short_code: str) -> bool:
-        short_url = await self.get(short_code)
-
-        if short_url is None:
-            return False
-
-        await self._session.delete(short_url)
+        query = (
+            update(ShortURL)
+            .where(ShortURL.short_code == short_code)
+            .returning(ShortURL.short_code)
+        )
+        result = await self._session.execute(query)
         await self._session.flush()
-        return True
+        return result.scalar_one_or_none() is not None
 
-    async def increment_access_count(self, short_code: str) -> None:
+    async def increment_access_count(self, short_code: str) -> ShortURL | None:
         query = (
             update(ShortURL)
             .where(ShortURL.short_code == short_code)
             .values(access_count=ShortURL.access_count + 1)
+            .returning(ShortURL)
         )
-        await self._session.execute(query)
+        result = await self._session.execute(query)
         await self._session.flush()
+        return result.scalar_one_or_none()
